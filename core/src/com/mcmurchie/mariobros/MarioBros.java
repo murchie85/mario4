@@ -24,7 +24,7 @@ public class MarioBros extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		setScreen(new PlayScreen(this)); // passes this screen itself
+		setScreen(new  PlayScreen(this)); // passes this screen itself
 	}
 
 	@Override

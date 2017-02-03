@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mcmurchie.mariobros.MarioBros;
 import com.mcmurchie.mariobros.Scenes.Hud;
 import com.mcmurchie.mariobros.Sprites.Mario;
+import com.mcmurchie.mariobros.Tools.B2WorldCreator;
 
 /**
  * Created by adammcmurchie on 14/01/2017.
@@ -78,77 +79,8 @@ public class PlayScreen implements Screen { //GENERATE ALL GDX METHODS
         world = new World(new Vector2(0, -10), true); // true = sleep objects at rest (good for memory)
         b2dr = new Box2DDebugRenderer();
 
-        BodyDef bdef = new BodyDef();//LATER WILL COME OUT OF CONSTRUCTOR INTO ITS OWN CLAS
-        PolygonShape shape = new PolygonShape();
-        FixtureDef fdef = new FixtureDef();
-        Body body;
+        new B2WorldCreator(world, map);// code moved to tools
 
-        //Create Ground Body & fixture
-        //get(2) - takes object from tiles
-        for (MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            // three types/ dynamicbody (afected by forces), static body,kinematic can be manipulated with velocity
-            bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set((rect.getX() + rect.getWidth() / 2)/ MarioBros.PPM, (rect.getY() + rect.getHeight() / 2)/ MarioBros.PPM);
-
-            //lets add it
-            body = world.createBody(bdef);
-
-            shape.setAsBox(rect.getWidth() / 2/ MarioBros.PPM, rect.getHeight() / 2/ MarioBros.PPM);
-            fdef.shape = shape;
-            // adds it
-            body.createFixture(fdef);
-        }
-
-
-        //Create pipe Body & fixture
-        for (MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            // three types/ dynamicbody (afected by forces), static body,kinematic can be manipulated with velocity
-            bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set((rect.getX() + rect.getWidth() / 2)/ MarioBros.PPM, (rect.getY() + rect.getHeight() / 2)/ MarioBros.PPM);
-
-            //lets add it
-            body = world.createBody(bdef);
-
-            shape.setAsBox(rect.getWidth() / 2/ MarioBros.PPM, rect.getHeight() / 2/ MarioBros.PPM);
-            fdef.shape = shape;
-            // adds it
-            body.createFixture(fdef);
-        }
-
-
-        //Create brick Body & fixture
-        for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            // three types/ dynamicbody (afected by forces), static body,kinematic can be manipulated with velocity
-            bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set((rect.getX() + rect.getWidth() / 2)/ MarioBros.PPM, (rect.getY() + rect.getHeight() / 2)/ MarioBros.PPM);
-
-            //lets add it
-            body = world.createBody(bdef);
-
-            shape.setAsBox(rect.getWidth() / 2/ MarioBros.PPM, rect.getHeight() / 2/ MarioBros.PPM);
-            fdef.shape = shape;
-            // adds it
-            body.createFixture(fdef);
-        }
-
-        //Create coin Body & fixture
-        for (MapObject object : map.getLayers().get(4 ).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            // three types/ dynamicbody (afected by forces), static body,kinematic can be manipulated with velocity
-            bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set((rect.getX() + rect.getWidth() / 2)/ MarioBros.PPM, (rect.getY() + rect.getHeight() / 2)/ MarioBros.PPM);
-
-            //lets add it
-            body = world.createBody(bdef);
-
-            shape.setAsBox(rect.getWidth() / 2/ MarioBros.PPM, rect.getHeight() / 2/ MarioBros.PPM);
-            fdef.shape = shape;
-            // adds it
-            body.createFixture(fdef);
-        }
         player = new Mario(world);
     }
     @Override
@@ -220,6 +152,10 @@ public class PlayScreen implements Screen { //GENERATE ALL GDX METHODS
 
     @Override
     public void dispose() {
-
+        map.dispose();
+        renderer.dispose();
+        world.dispose();
+        b2dr.dispose();
+        hud.dispose(); // dispose method exists in hud
     } // screen interface badlogic
 }
