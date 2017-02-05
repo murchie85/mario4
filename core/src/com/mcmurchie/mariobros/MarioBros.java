@@ -17,6 +17,13 @@ public class MarioBros extends Game {
 	public static final int V_HEIGHT = 208; // Virtual width and height
 	public static final float PPM = 100;
 
+	public static final short DEFAULT_BIT = 1;// every fixture already is set to one in catagory
+	public static final short MARIO_BIT = 2;// we use power of two bitwise and/or operation
+	public static final short BRICK_BIT = 4;
+	public static final short COIN_BIT = 8;
+	public static final short DESTROYED_BIT = 16;
+
+
 	public SpriteBatch batch;
 
 

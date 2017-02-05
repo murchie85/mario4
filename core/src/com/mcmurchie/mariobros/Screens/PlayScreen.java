@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -26,6 +27,7 @@ import com.mcmurchie.mariobros.MarioBros;
 import com.mcmurchie.mariobros.Scenes.Hud;
 import com.mcmurchie.mariobros.Sprites.Mario;
 import com.mcmurchie.mariobros.Tools.B2WorldCreator;
+import com.mcmurchie.mariobros.Tools.WorldContactListener;
 
 /**
  * Created by adammcmurchie on 14/01/2017.
@@ -35,6 +37,9 @@ import com.mcmurchie.mariobros.Tools.B2WorldCreator;
 
 public class PlayScreen implements Screen { //GENERATE ALL GDX METHODS
     private MarioBros game;
+    private TextureAtlas atlas;
+
+
     private OrthographicCamera gamecam;
     private Viewport gamePort;
     private Hud hud;
@@ -58,6 +63,8 @@ public class PlayScreen implements Screen { //GENERATE ALL GDX METHODS
     //view ports. Screen viewport doesn't scale so bigger screen can see more
     //fitviewport always maintains ration
     public PlayScreen(MarioBros game) {
+        atlas = new TextureAtlas("Mario_and_Enemies.pack");
+
         this.game = game;
         //create cam used to follow mario
         gamecam = new OrthographicCamera();
@@ -81,8 +88,18 @@ public class PlayScreen implements Screen { //GENERATE ALL GDX METHODS
 
         new B2WorldCreator(world, map);// code moved to tools
 
-        player = new Mario(world);
-    }
+        player = new Mario(world, this);
+
+        world.setContactListener(new WorldContactListener());
+        }
+
+        public TextureAtlas getAtlas(){
+        return atlas;
+
+            }
+
+
+
     @Override
     public void show () {
 
@@ -106,8 +123,13 @@ public class PlayScreen implements Screen { //GENERATE ALL GDX METHODS
     // for updating gameworld
     public void update(float dt) {
         handleInput(dt);
+
+
         // vel and pos iterations - affects how two bodies react during a colision
         world.step(1/60f, 6, 2);
+
+        player.update(dt);
+        hud.update(dt); //update the hud time
 
         gamecam.position.x = player.b2body.getPosition().x;
 
@@ -122,9 +144,16 @@ public class PlayScreen implements Screen { //GENERATE ALL GDX METHODS
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.render();// should be after screen is cleared
-
+        //set our batch to render BOX2DDEBUTLINES
         b2dr.render(world, gamecam.combined);
 
+        //set our batch to draw mario
+        game.batch.setProjectionMatrix(gamecam.combined);//this is the main cam running around
+        game.batch.begin();// open the box to put textures inside
+        player.draw(game.batch);// giving the sprite gamebatch to draw itself  (the spriteclass knows how to draw itself)
+        game.batch.end();
+
+        //set our batch to now draw what HUD sees
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
 
