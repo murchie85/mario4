@@ -3,6 +3,9 @@ package com.mcmurchie.mariobros;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -27,20 +30,47 @@ public class MarioBros extends Game {
 	public SpriteBatch batch;
 
 
+	/*
+	WARNING USING ASSET MANAGER IN A STATIC WAY CAN CAUSE ISSUES
+	ESPECIALLY ON ANDROID, INSTEAD YOU MAY WANT TO PASS AROUND THE ASSET MANAGER TO
+	THOSE CLASSES THAT NEED IT. BUT WE WILL BE USING THE STATIC CONTEXT IN THIS TUTORIAL
+	TO SAVE TIME
+	 */
+	public static AssetManager manager;
+
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		manager = new AssetManager();
+		//queue up all the assets to be loaded by manager
+		manager.load("audio/music/mario_music.ogg", Music.class);
+		manager.load("audio/sounds/coin.wav", Sound.class);
+		manager.load("audio/sounds/bump.wav", Sound.class);
+		manager.load("audio/sounds/breakblock.wav", Sound.class);
+		manager.finishLoading(); // blocks everything and allows assets to finish loading
+
+
 		setScreen(new  PlayScreen(this)); // passes this screen itself
+	}
+	@Override
+	public void dispose () {
+		super.dispose();
+		manager.dispose();
+		batch.dispose();// check what this is
 	}
 
 	@Override
 	public void render () {
 		super.render();
+		/*
+		manager.update();once returns true/false to say loadedcomplete
+		or
+		if(manager.update()){
+		put stuff in here that require these assets
+		}
+		 */
 	}
 	
-	@Override
-	public void dispose () {
-		batch.dispose();
-	}
+
 }

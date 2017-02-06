@@ -36,9 +36,9 @@ public class Mario extends Sprite { // extends badlogic gaming sprites
 
 
         // initialize
-    public Mario(World world, PlayScreen screen){
+    public Mario(PlayScreen screen){
         super(screen.getAtlas().findRegion("little_mario"));
-        this.world = world;
+        this.world = screen.getWorld();
         currentState = State.STANDING;
         previousState = State.STANDING;
         stateTimer = 0;

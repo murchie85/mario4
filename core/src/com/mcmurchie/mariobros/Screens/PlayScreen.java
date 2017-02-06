@@ -3,6 +3,7 @@ package com.mcmurchie.mariobros.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -51,10 +52,10 @@ public class PlayScreen implements Screen { //GENERATE ALL GDX METHODS
     // BOX 2D VARIABLES
     private World world;
     private Box2DDebugRenderer b2dr; // GIVES GRAPHICAL REPRESENTAITON OF FIXTURES
-
-
-
+    // sprites
     private Mario player;
+
+    private Music music;
 
 
 
@@ -86,17 +87,20 @@ public class PlayScreen implements Screen { //GENERATE ALL GDX METHODS
         world = new World(new Vector2(0, -10), true); // true = sleep objects at rest (good for memory)
         b2dr = new Box2DDebugRenderer();
 
-        new B2WorldCreator(world, map);// code moved to tools
+        new B2WorldCreator(this);// code moved to tools
 
-        player = new Mario(world, this);
+        // create mario in our game world
+        player = new Mario(this);
 
         world.setContactListener(new WorldContactListener());
+
+        music = MarioBros.manager.get("audio/music/mario_music.ogg", Music.class);
+        music.setLooping(true);
+        music.play();
+
         }
 
-        public TextureAtlas getAtlas(){
-        return atlas;
-
-            }
+        public TextureAtlas getAtlas(){return atlas;}
 
 
 
@@ -162,6 +166,14 @@ public class PlayScreen implements Screen { //GENERATE ALL GDX METHODS
     @Override
     public void resize(int width, int height) {
         gamePort.update(width, height); // find out the actual size
+    }
+
+    public TiledMap getMap(){
+        return map;
+    }
+
+    public World getWorld(){
+        return world;
     }
 
     @Override

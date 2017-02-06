@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mcmurchie.mariobros.MarioBros;
+import com.mcmurchie.mariobros.Screens.PlayScreen;
 
 /**
  * Created by adammcmurchie on 03/02/2017.
@@ -26,9 +27,9 @@ public abstract class InteractiveTileObject {
     protected Fixture fixture;
 
     // THIS CODE WAS CUT FROM BRICK AND COIN AND PASTED HERE (TO SAVE DUPLICATION - HENCE THE ABSTRACT ITS THE SAME)
-    public InteractiveTileObject(World world, TiledMap map, Rectangle bounds){
-        this.world = world;
-        this.map   = map;
+    public InteractiveTileObject(PlayScreen screen, Rectangle bounds){
+        this.world = screen.getWorld();
+        this.map   = screen.getMap();
         this.bounds = bounds;
 
         //create coin/brick
